@@ -9,6 +9,7 @@ import mlflow
 import mlflow.sklearn
 
 import dagshub
+dagshub.auth.add_app_token(os.getenv("MLFLOW_TRACKING_PASSWORD"))
 dagshub.init(repo_owner='strengthFTW', repo_name='Continous_training', mlflow=True)
 
 # start mlflow tracking
