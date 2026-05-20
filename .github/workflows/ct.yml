@@ -27,3 +27,9 @@ jobs:
             
             - name: retrain the model
               run: python src/train.py     
+
+            - name: upload trained model
+              uses: actions/upload-artifact@v4
+              with:
+                name: trained model
+                path: model/model.pkl 
