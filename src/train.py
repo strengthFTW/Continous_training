@@ -8,6 +8,9 @@ import sys
 import mlflow
 import mlflow.sklearn
 
+import dagshub
+dagshub.init(repo_owner='strengthFTW', repo_name='Continous_training', mlflow=True)
+
 # start mlflow tracking
 mlflow.set_experiment("continuous-training")
 
