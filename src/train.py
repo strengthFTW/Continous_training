@@ -5,36 +5,49 @@ from sklearn.metrics import accuracy_score
 import joblib
 import os
 import sys
+import mlflow
+import mlflow.sklearn
 
-# load dataset
-X, y = load_iris(return_X_y=True)
+# start mlflow tracking
+mlflow.set_experiment("continuous-training")
 
-# split dataset
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
+with mlflow.start_run():
 
-# train model
-model = RandomForestClassifier()
-model.fit(X_train, y_train)
+    # load dataset
+    X, y = load_iris(return_X_y=True)
 
-# predictions
-y_pred = model.predict(X_test)
+    # split dataset
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
 
-# accuracy
-accuracy = accuracy_score(y_test, y_pred)
+    # model
+    model = RandomForestClassifier()
 
-print(f"Model Accuracy: {accuracy}")
+    # train
+    model.fit(X_train, y_train)
 
-# evaluation gate
-if accuracy < 0.90:
-    print("Model accuracy too low. Failing pipeline.")
-    sys.exit(1)
+    # predict
+    y_pred = model.predict(X_test)
 
-# create model folder
-os.makedirs("model", exist_ok=True)
+    # accuracy
+    accuracy = accuracy_score(y_test, y_pred)
 
-# save model
-joblib.dump(model, "model/model.pkl")
+    print(f"Model Accuracy: {accuracy}")
 
-print("Model passed evaluation and saved successfully.")
+    # log metric
+    mlflow.log_metric("accuracy", accuracy)
+
+    # log model
+    mlflow.sklearn.log_model(model, "model")
+
+    # evaluation gate
+    if accuracy < 0.90:
+        print("Model accuracy too low. Failing pipeline.")
+        sys.exit(1)
+
+    # save local model
+    os.makedirs("model", exist_ok=True)
+    joblib.dump(model, "model/model.pkl")
+
+    print("Model passed evaluation and saved successfully.")
