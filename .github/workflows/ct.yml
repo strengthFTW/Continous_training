@@ -33,3 +33,15 @@ jobs:
               with:
                 name: trained model
                 path: model/model.pkl 
+
+            - name: login to docker
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: build docker image
+              run: docker build -t riteshpashikanti/continuous_training .
+
+            - name: push docker image
+              run: docker push riteshpashikanti/continuous_training 
