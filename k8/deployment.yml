@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: continuous-training
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: continuous-training
+
+  template:
+    metadata:
+      labels:
+        app: continuous-training
+
+    spec:
+      containers:
+      - name: continuous-training
+        image: riteshpashikanti/continuous_training:latest
+        ports:
+        - containerPort: 80
